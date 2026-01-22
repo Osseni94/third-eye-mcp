@@ -2,6 +2,13 @@
   <img src="logo.png" alt="Third Eye Logo" width="200">
 </p>
 
+<p align="center">
+  <a href="https://pypi.org/project/third-eye-mcp/"><img src="https://img.shields.io/pypi/v/third-eye-mcp?color=blue&label=PyPI" alt="PyPI"></a>
+  <a href="https://pypi.org/project/third-eye-mcp/"><img src="https://img.shields.io/pypi/pyversions/third-eye-mcp" alt="Python Versions"></a>
+  <a href="https://pypi.org/project/third-eye-mcp/"><img src="https://img.shields.io/pypi/dm/third-eye-mcp?color=green&label=Downloads" alt="Downloads"></a>
+  <a href="https://github.com/Osseni94/third-eye-mcp/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Osseni94/third-eye-mcp" alt="License"></a>
+</p>
+
 # Third Eye MCP (Python)
 
 A free, unlimited screen capture MCP server for Python. Capture screenshots with no daily limits - includes promotional messages in metadata.
