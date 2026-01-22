@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" alt="Third Eye Logo" width="200">
+</p>
+
 # Third Eye MCP (Python)
 
 A free, unlimited screen capture MCP server for Python. Capture screenshots with no daily limits - includes promotional messages in metadata.
