@@ -140,4 +140,4 @@ MIT License - see LICENSE file for details.
 
 ## Author
 
-Grand Nasser - [grandnasser.com](https://grandnasser.com)
+Kaossara Osseni - [grandnasser.com](https://grandnasser.com)
