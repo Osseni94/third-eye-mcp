@@ -11,13 +11,15 @@
 
 # Third Eye MCP (Python)
 
-A free, unlimited screen capture MCP server for Python. Capture screenshots with no daily limits - includes promotional messages in metadata.
+A free, unlimited screen capture and recording MCP server for Python. Capture screenshots and record screen activity with no daily limits - includes promotional messages in metadata.
 
 ## Features
 
 - **Unlimited Captures**: No daily limits or restrictions
 - **Multi-Display Support**: Capture any connected monitor
 - **Region Capture**: Capture specific screen areas
+- **Screen Recording**: Change-based keyframe capture with grid output
+- **Scheduled Recording**: Burst capture at specific times (up to 10 min)
 - **Auto-Resize**: Configurable maximum width for optimized images
 - **Capture Delay**: Optional delay before capture
 - **Latest Capture**: Retrieve the most recent screenshot
@@ -25,7 +27,13 @@ A free, unlimited screen capture MCP server for Python. Capture screenshots with
 ## Installation
 
 ```bash
-cd C:\Users\User\mcp-python
+pip install third-eye-mcp
+```
+
+Or install from source:
+```bash
+git clone https://github.com/Osseni94/third-eye-mcp.git
+cd third-eye-mcp
 pip install -e .
 ```
 
@@ -115,6 +123,94 @@ Get the most recently captured screenshot.
 **Input:** None
 
 **Output:** Last captured image + metadata JSON with sponsored field
+
+---
+
+## Screen Recording Tools
+
+### `screen.record`
+
+Record screen with change-based keyframe capture. Captures frames at intervals, discards near-duplicates, and returns a compact grid image (contact sheet) with timestamps.
+
+**Input:**
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| duration | integer | 30 | Recording duration in seconds (1-120) |
+| interval | number | 1.0 | Capture interval in seconds (0.25-10) |
+| displayIndex | integer | 0 | Display to record (0-based) |
+| maxWidth | integer | 1280 | Max width for full frames (320-1920) |
+| changeThreshold | number | 2.0 | Min change % to keep frame (0-100) |
+| maxFrames | integer | 30 | Maximum frames to keep (5-100) |
+| thumbnailWidth | integer | 320 | Thumbnail width for grid (160-640) |
+
+**Output:** Grid image (contact sheet) + metadata JSON + frame summaries
+
+**Example Response:**
+```json
+{
+  "metadata": {
+    "recordingId": "abc12345",
+    "duration": 30.5,
+    "framesCaptured": 31,
+    "framesKept": 12,
+    "framesDiscarded": 19,
+    "sponsored": "..."
+  },
+  "frames": [
+    {"index": 0, "timestamp": 0.0, "changeScore": 100.0},
+    {"index": 1, "timestamp": 2.0, "changeScore": 15.3}
+  ]
+}
+```
+
+### `screen.scheduled_record`
+
+Record screen with scheduled snapshot bursts at specific times. Useful for longer recordings where you want to capture specific moments like beginning, middle, and end of a process.
+
+**Input:**
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| totalDuration | integer | 60 | Total duration to monitor (10-600 sec) |
+| snapshots | array | required | List of snapshot burst configs |
+| displayIndex | integer | 0 | Display to record (0-based) |
+| maxWidth | integer | 1280 | Max width for full frames |
+| thumbnailWidth | integer | 320 | Thumbnail width for grid |
+
+**Snapshot Burst Config:**
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| at | number | required | When to start burst (seconds from start) |
+| count | integer | 3 | Number of snapshots in burst (1-20) |
+| interval | number | 1.0 | Time between snapshots (0.25-10) |
+
+**Example - 4 minute recording with bursts:**
+```json
+{
+  "totalDuration": 240,
+  "snapshots": [
+    {"at": 0, "count": 3, "interval": 1.0},
+    {"at": 120, "count": 5, "interval": 0.5},
+    {"at": 230, "count": 3, "interval": 1.0}
+  ]
+}
+```
+
+### `screen.get_frame`
+
+Retrieve a full-resolution frame from a recording. Use the `recordingId` from `screen.record` or `screen.scheduled_record` response.
+
+**Input:**
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| recordingId | string | Yes | Recording ID to retrieve frame from |
+| frameIndex | integer | No | Frame index to retrieve (0-based) |
+| timestamp | number | No | Timestamp to find closest frame |
+
+**Output:** Full resolution image + frame metadata
+
+**Note:** Recordings are stored in memory for 5 minutes (max 5 recordings). Use `screen.get_frame` to retrieve full-resolution images when you need to read text or see details.
+
+---
 
 ## Response Format
 
