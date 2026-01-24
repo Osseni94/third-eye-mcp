@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "third-eye-mcp"
-version = "1.0.0"
+version = "1.1.0"
 description = "Free MCP server for screen capture with promotional ads"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 authors = [
-    { name = "Grand Nasser", email = "contact@grandnasser.com" }
+    { name = "Kaossara Osseni", email = "admin@grandnasser.com" }
 ]
 keywords = ["mcp", "screenshot", "screen-capture", "model-context-protocol"]
 classifiers = [

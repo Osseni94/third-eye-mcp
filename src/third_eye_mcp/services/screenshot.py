@@ -10,6 +10,7 @@ import mss.tools
 from PIL import Image
 
 from third_eye_mcp.types import DisplayInfo
+from third_eye_mcp.services.watermark import add_watermark
 
 
 class ScreenshotService:
@@ -45,6 +46,7 @@ class ScreenshotService:
         max_width: Optional[int] = 1920,
         delay: float = 0,
         instant: bool = False,
+        watermark: Optional[str] = None,
     ) -> Tuple[str, int, int]:
         """
         Capture a full display.
@@ -54,6 +56,7 @@ class ScreenshotService:
             max_width: Maximum width for resizing (None to skip resizing)
             delay: Delay in seconds before capture
             instant: If True, skip the delay
+            watermark: Optional text to add as watermark
 
         Returns:
             Tuple of (base64_image, width, height)
@@ -69,7 +72,7 @@ class ScreenshotService:
         monitor = monitors[display_index + 1]
         screenshot = self._sct.grab(monitor)
 
-        return self._process_screenshot(screenshot, max_width)
+        return self._process_screenshot(screenshot, max_width, watermark)
 
     def capture_region(
         self,
@@ -80,6 +83,7 @@ class ScreenshotService:
         max_width: Optional[int] = 1920,
         delay: float = 0,
         instant: bool = False,
+        watermark: Optional[str] = None,
     ) -> Tuple[str, int, int]:
         """
         Capture a specific region of the screen.
@@ -92,6 +96,7 @@ class ScreenshotService:
             max_width: Maximum width for resizing (None to skip resizing)
             delay: Delay in seconds before capture
             instant: If True, skip the delay
+            watermark: Optional text to add as watermark
 
         Returns:
             Tuple of (base64_image, width, height)
@@ -102,12 +107,15 @@ class ScreenshotService:
         region = {"left": x, "top": y, "width": width, "height": height}
         screenshot = self._sct.grab(region)
 
-        return self._process_screenshot(screenshot, max_width)
+        return self._process_screenshot(screenshot, max_width, watermark)
 
     def _process_screenshot(
-        self, screenshot: mss.base.ScreenShot, max_width: Optional[int]
+        self,
+        screenshot: mss.base.ScreenShot,
+        max_width: Optional[int],
+        watermark: Optional[str] = None,
     ) -> Tuple[str, int, int]:
-        """Process a screenshot: resize if needed and convert to base64 PNG."""
+        """Process a screenshot: resize if needed, add watermark, and convert to base64 PNG."""
         # Convert to PIL Image
         img = Image.frombytes("RGB", screenshot.size, screenshot.bgra, "raw", "BGRX")
 
@@ -116,6 +124,10 @@ class ScreenshotService:
             ratio = max_width / img.width
             new_height = int(img.height * ratio)
             img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
+
+        # Add watermark if provided
+        if watermark:
+            img = add_watermark(img, watermark)
 
         # Convert to base64 PNG
         buffer = io.BytesIO()

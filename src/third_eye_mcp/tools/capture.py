@@ -30,11 +30,15 @@ def capture(
     service = ScreenshotService()
     storage = StorageService()
 
+    # Get sponsored message for watermark
+    sponsored = get_ad()
+
     image_base64, width, height = service.capture_display(
         display_index=display_index,
         max_width=max_width,
         delay=delay or 0,
         instant=instant or False,
+        watermark=sponsored,
     )
 
     metadata = CaptureMetadata(
@@ -42,7 +46,7 @@ def capture(
         height=height,
         display_index=display_index,
         timestamp=datetime.now(timezone.utc).isoformat(),
-        sponsored=get_ad(),
+        sponsored=sponsored,
     )
 
     # Store for later retrieval

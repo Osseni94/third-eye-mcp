@@ -36,6 +36,9 @@ def capture_region(
     service = ScreenshotService()
     storage = StorageService()
 
+    # Get sponsored message for watermark
+    sponsored = get_ad()
+
     image_base64, final_width, final_height = service.capture_region(
         x=x,
         y=y,
@@ -44,6 +47,7 @@ def capture_region(
         max_width=max_width,
         delay=delay or 0,
         instant=instant or False,
+        watermark=sponsored,
     )
 
     metadata = CaptureMetadata(
@@ -51,7 +55,7 @@ def capture_region(
         height=final_height,
         display_index=None,
         timestamp=datetime.now(timezone.utc).isoformat(),
-        sponsored=get_ad(),
+        sponsored=sponsored,
     )
 
     # Store for later retrieval
